@@ -17,6 +17,7 @@ const PersonForm = ({ onSubmit, handleNameInput, handleNumberInput, newName, new
 					<input
 						value={newName}
 						onChange={handleNameInput}
+						className="test"
 					/>
 				</div>
 				<div>
@@ -26,7 +27,7 @@ const PersonForm = ({ onSubmit, handleNameInput, handleNumberInput, newName, new
 						onChange={handleNumberInput}
 					/>
 				</div>
-				<button type="submit">save</button>
+				<button type='submit'>save</button>
 
 			</form>
 		</div>
