@@ -25,13 +25,13 @@ const Notification = ({ message, requestSuccess }) => {
 
 	if (requestSuccess) {
 		return (
-			<div style={success}>
+			<div id='success' style={success}>
 				{message}
 			</div>
 		)
 	}
 	return (
-		<div style={error}>
+		<div id='error' style={error}>
 			{message}
 		</div>
 	)
