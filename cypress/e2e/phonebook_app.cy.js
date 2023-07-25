@@ -7,15 +7,6 @@ Cypress.Commands.add('login', ({ username, password }) => {
   })
 })
 
-// Cypress.Commands.add('logout', ({ name, number }) => {
-//   // cy.request('POST', `${Cypress.env('BACKEND')}/login`, {
-//   //   username, password
-//   // }).then(({ body }) => {
-//   //   localStorage.setItem('loggedPhonebookUser', JSON.stringify(body))
-//   //   cy.visit('')
-//   // })
-// })
-
 Cypress.Commands.add('createPerson', ({ name, number }) => {
   cy.request({
     method: 'POST',

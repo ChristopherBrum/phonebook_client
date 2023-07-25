@@ -1,25 +1,27 @@
-import { useState, useEffect, useRef } from 'react'
+import {
+  useState,
+  useEffect } from 'react'
+
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate } from 'react-router-dom'
+
 import Header from './components/Header'
-import Person from './components/Person'
-import Input from './components/Input'
-import LoginForm from './components/LoginForm'
-import PersonForm from './components/PersonForm'
 import personService from './services/person'
-import loginService from './services/login'
 import Notification from './components/Notification'
-import Togglable from './components/Togglable'
+import Home from './components/Home'
+import Add from './components/Add'
+import LoginForm from './components/LoginForm'
+import Contact from './components/Contact'
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [newSearch, setNewSearch] = useState('')
   const [flashMessage, setFlashMessage] = useState(null)
   const [requestSuccess, setRequestSuccess] = useState(null)
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  // const [loginVisible, setLoginVisible] = useState(false)
 
   useEffect(() => {
     personService
@@ -39,72 +41,7 @@ const App = () => {
     }
   }, [])
 
-  const handleNameInput = (event) => setNewName(event.target.value)
-  const handleNumberInput = (event) => setNewNumber(event.target.value)
-  const handleSearchInput = (event) => setNewSearch(event.target.value)
-
-  const createPerson = (event) => {
-    event.preventDefault()
-    const newPersonObject = {
-      name: newName,
-      number: newNumber,
-    }
-
-    if (newName.length < 3) {
-      createFlashMessage('name must be at least 3 characters long', false)
-      return
-    }
-
-    if (!(/^\d{3}-\d{3}-\d{4}$/.test(newNumber)) || newNumber.length !== 12) {
-      createFlashMessage('number must be formatted `xxx-xxx-xxxx`', false)
-      return
-    }
-
-    if (existingPerson()) {
-      if (window.confirm(`${newName} is already added to phonebook. Replace old number with new one?`)) {
-        const contact = findPersonByName()
-        updateUser(contact)
-      }
-      return
-    }
-
-    personService
-      .create(newPersonObject)
-      .then((createdPerson) => {
-        if (!createdPerson) {
-          createFlashMessage('check your inputs', false)
-          return
-        }
-        personFormRef.current.toggleVisibility()
-        const personsObj = persons.concat(createdPerson)
-        setPersons(personsObj)
-        setNewName('')
-        setNewNumber('')
-        createFlashMessage(`${createdPerson.name} has been created`, true)
-      })
-      .catch(err => {
-        console.log(err)
-        createFlashMessage(err.message, false)
-      })
-  }
-
-  const updateUser = (person) => {
-    const updatedPerson = { ...person, number: newNumber }
-
-    personService
-      .update(person.id, updatedPerson)
-      .then(updatedPerson => {
-        const updatedPersons = persons.map(person => updatedPerson.id === person.id ? updatedPerson : person)
-        setPersons(updatedPersons)
-        setNewName('')
-        setNewNumber('')
-        createFlashMessage(`${updatedPerson.name} has been updated`, true)
-      })
-      .catch(err => {
-        console.log(err)
-        createFlashMessage(err.message, false)
-      })
-  }
+  const findPerson = (id) => persons.find(person => person.id === id)
 
   const deletePerson = (id) => {
     const personName = findPerson(id).name
@@ -123,114 +60,120 @@ const App = () => {
     }
   }
 
-  const existingPerson = () => {
-    return persons.some((person) => person.name === newName)
-  }
-
-  const getFilteredPersons = () => {
-    return persons.filter(person => {
-      return person.name.slice(0, newSearch.length).toLowerCase() === newSearch.toLowerCase()
-    })
-  }
-
-  const filteredPersons = newSearch.length > 0 ? getFilteredPersons() : persons
-  const findPerson = (id) => persons.find(person => person.id === id)
-  const findPersonByName = () => persons.find(person => person.name === newName)
-
   const createFlashMessage = (message, success) => {
     setRequestSuccess(success)
     setFlashMessage(message)
     setTimeout(() => setFlashMessage(''), 5000)
   }
 
-  const handleLogin = async (event) => {
-    event.preventDefault()
 
-    try {
-      const user = await loginService.login({
-        username,
-        password
-      })
+  const navItemStyling = {
+    marginLeft: '24px'
+  }
 
-      window.localStorage.setItem('loggedPhonebookUser', JSON.stringify(user))
+  const headerStyling = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  }
 
-      personService.setToken(user.token)
-      setUser(user)
-      setUsername('')
-      setPassword('')
-    } catch (error) {
-      createFlashMessage('Wrong credentials', false)
-    }
+  const navStyling = {
+    display: 'flex',
+    alignItems: 'center'
   }
 
   const handleLogout = () => {
+    createFlashMessage('successfully logged out', true)
     window.localStorage.removeItem('loggedPhonebookUser')
     setUser(null)
   }
 
-  const loginForm = () => {
+  if (!user) {
     return (
-      <Togglable buttonLabel="log in">
+      <Router>
+        <div style={headerStyling}>
+          <Header title="Phonebook" size='1'/>
+        </div>
+
+        { flashMessage && <Notification message={flashMessage} requestSuccess={requestSuccess} />}
+
         <LoginForm
-          username={username}
-          password={password}
-          handleUsernameChange={({ target }) => setUsername(target.value)}
-          handlePasswordChange={({ target }) => setPassword(target.value)}
-          handleSubmit={handleLogin}
+          createFlashMessage={createFlashMessage}
+          setUser={setUser}
         />
-      </Togglable>
+
+      </Router>
     )
   }
-
-  const personForm = () => {
-    return (
-      <div>
-        <p>logged in as {user.username}</p>
-        <Togglable buttonLabel="new contact" ref={personFormRef}>
-          <PersonForm
-            newName={newName}
-            newNumber={newNumber}
-            handleNameInput={handleNameInput}
-            handleNumberInput={handleNumberInput}
-            onSubmit={createPerson}
-            handleLogout={handleLogout}
-          />
-        </Togglable>
-        <button onClick={handleLogout}>logout</button>
-      </div>
-    )
-  }
-
-  const personFormRef = useRef()
 
   return (
-    <div>
-      <Header title="Phonebook" />
+    <>
+      <Router>
+        <div style={headerStyling}>
+          <div style={navStyling}>
+            <Header title="Phonebook" size='1'/>
+            <div id="nav-container">
+              <Link style={navItemStyling} to="/">home</Link>
+              <Link style={navItemStyling} to="/add">add</Link>
+              <button style={navItemStyling} onClick={handleLogout}>logout</button>
+            </div>
+          </div>
+          <p>logged in as {user.username}</p>
+        </div>
 
-      { flashMessage && <Notification message={flashMessage} requestSuccess={requestSuccess} />}
+        { flashMessage && <Notification message={flashMessage} requestSuccess={requestSuccess} />}
 
-      {!user && loginForm()}
-      {user && personForm()}
+        <Routes>
+          <Route
+            path="/contacts/:id"
+            element={
+              user
+              ? <Contact persons={persons} />
+              : <Navigate replace to='/login' />
+            }>
+          </Route>
+          <Route
+            path="/add"
+            element={
+              <Add
+                user={user}
+                persons={persons}
+                setPersons={setPersons}
+                createFlashMessage={createFlashMessage}
+              />
+            }>
+          </Route>
+          <Route
+            path='/login'
+            element={
+              user
+              ? <Navigate replace to='/' />
+              : <LoginForm
+                createFlashMessage={createFlashMessage}
+                setUser={setUser}
+              />
+            }>
+          </Route>
+          <Route
+            path="/"
+            element={
+              <Home
+                persons={persons}
+                deletePerson={deletePerson}
+              />
+            }>
+          </Route>
+        </Routes>
+      </Router>
 
-      <form>
-        <Input
-          text='filter shown with '
-          stateValue={newSearch}
-          stateHandler={handleSearchInput}
-        />
-      </form>
-
-      <Header title="Numbers" />
-      {filteredPersons.map((person) =>
-        <Person
-          key={person.id}
-          id={person.id}
-          name={person.name}
-          number={person.number}
-          deletePerson={deletePerson}
-        />
-      )}
-    </div>
+      <div style={{
+        textAlign: 'center',
+        marginTop: '50px',
+        borderTop: '1px solid rbg(225, 225, 225)'
+      }}>
+        <p>©christopherbrum.com 2023</p>
+      </div>
+    </>
   )
 }
 
