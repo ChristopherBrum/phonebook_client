@@ -14,8 +14,13 @@ const Home = ({ persons, deletePerson }) => {
   }
   const filteredPersons = newSearch.length > 0 ? getFilteredPersons() : persons
 
+	const contactStyling = {
+		marginTop: '50px'
+	}
+
 	return (
-		<>
+		<div style={contactStyling}>
+			<Header title="Numbers" size='2' />
 			<form>
 				<Input
 					text='filter shown with '
@@ -24,7 +29,6 @@ const Home = ({ persons, deletePerson }) => {
 				/>
 			</form>
 
-			<Header title="Numbers" size='2' />
 			{filteredPersons.map((person) =>
 				<Person
 					key={person.id}
@@ -34,7 +38,7 @@ const Home = ({ persons, deletePerson }) => {
 					deletePerson={deletePerson}
 				/>
 			)}
-		</>
+		</div>
 	)
 }
 

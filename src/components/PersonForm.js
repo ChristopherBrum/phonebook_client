@@ -1,37 +1,53 @@
-const PersonForm = ({ onSubmit, handleNameInput, handleNumberInput, newName, newNumber }) => {
+import { Form, Button } from 'react-bootstrap'
+
+const PersonForm = ({
+	onSubmit,
+	handleNameInput,
+	handleNumberInput,
+	newName,
+	newNumber }) => {
+
+	const personStyling = {
+		width: '500px',
+		marginLeft: 'auto',
+		marginRight: 'auto',
+		marginTop: '100px'
+	}
+
+	const buttonStyling = {
+		width: '100%',
+		marginTop: '20px',
+	}
+
 	return (
-		<div style={{
-				backgroundColor: '#E5FFCC',
-				width: '250px',
-				padding: '0 30px 20px',
-				margin: '10px',
-				borderLeft: '1px solid black',
-				border: '1px solid black',
-				borderRadius: '3px',
-			}}>
+		<div style={personStyling}>
 			<h2>Create a new contact</h2>
 
-			<form onSubmit={onSubmit}>
-				<div>
-					<label>Name:</label>
-					<input
+			<Form onSubmit={onSubmit}>
+				<Form.Group>
+					<Form.Label>Name:</Form.Label>
+					<Form.Control
 						value={newName}
 						onChange={handleNameInput}
 						className='test'
 						id='name'
 					/>
-				</div>
-				<div>
-					<label>Number:</label>
-					<input
+					<Form.Label>Number:</Form.Label>
+					<Form.Control
 						value={newNumber}
 						onChange={handleNumberInput}
 						id='number'
 					/>
-				</div>
-				<button id='create-contact-button' type='submit'>save</button>
-
-			</form>
+					<Button
+						style={buttonStyling}
+						id='create-contact-button'
+						className='test'
+						variant='primary'
+						type='submit'>
+						save
+					</Button>
+				</Form.Group>
+			</Form>
 		</div>
 	)
 }

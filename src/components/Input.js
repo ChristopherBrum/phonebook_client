@@ -1,7 +1,7 @@
-const Input = (props) => {
+const Input = ({ text, stateHandler, stateValue }) => {
 	return (
 		<div>
-			{props.text}: <input value={props.stateValue} onChange={props.stateHandler}/>
+			{text}: <input value={stateValue} onChange={stateHandler}/>
 		</div>
 	)
 }

@@ -10,12 +10,15 @@ import {
   Navigate } from 'react-router-dom'
 
 import Header from './components/Header'
-import personService from './services/person'
-import Notification from './components/Notification'
+// import Notification from './components/Notification'
 import Home from './components/Home'
 import Add from './components/Add'
 import LoginForm from './components/LoginForm'
 import Contact from './components/Contact'
+
+import personService from './services/person'
+
+import { Alert, Button } from 'react-bootstrap'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -51,11 +54,11 @@ const App = () => {
         .then(() => {
           const updatedPersons = persons.filter(person => person.id !== id)
           setPersons(updatedPersons)
-          createFlashMessage(`${personName} has been deleted`, true)
+          createFlashMessage(`${personName} has been deleted`, 'success')
         })
         .catch(err => {
           console.log(err)
-          createFlashMessage(err.message, false)
+          createFlashMessage(err.message, 'danger')
         })
     }
   }
@@ -66,6 +69,11 @@ const App = () => {
     setTimeout(() => setFlashMessage(''), 5000)
   }
 
+  const handleLogout = () => {
+    createFlashMessage('successfully logged out', 'success')
+    window.localStorage.removeItem('loggedPhonebookUser')
+    setUser(null)
+  }
 
   const navItemStyling = {
     marginLeft: '24px'
@@ -73,19 +81,13 @@ const App = () => {
 
   const headerStyling = {
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between'
+    alignItems: 'end',
+    justifyContent: 'space-between',
   }
 
   const navStyling = {
     display: 'flex',
     alignItems: 'center'
-  }
-
-  const handleLogout = () => {
-    createFlashMessage('successfully logged out', true)
-    window.localStorage.removeItem('loggedPhonebookUser')
-    setUser(null)
   }
 
   if (!user) {
@@ -95,7 +97,11 @@ const App = () => {
           <Header title="Phonebook" size='1'/>
         </div>
 
-        { flashMessage && <Notification message={flashMessage} requestSuccess={requestSuccess} />}
+        {flashMessage &&
+          <Alert variant={requestSuccess}>
+            {flashMessage}
+          </Alert>
+        }
 
         <LoginForm
           createFlashMessage={createFlashMessage}
@@ -107,7 +113,7 @@ const App = () => {
   }
 
   return (
-    <>
+    <div className='container'>
       <Router>
         <div style={headerStyling}>
           <div style={navStyling}>
@@ -115,13 +121,18 @@ const App = () => {
             <div id="nav-container">
               <Link style={navItemStyling} to="/">home</Link>
               <Link style={navItemStyling} to="/add">add</Link>
-              <button style={navItemStyling} onClick={handleLogout}>logout</button>
+              <Button style={navItemStyling} onClick={handleLogout}>logout</Button>
             </div>
           </div>
           <p>logged in as {user.username}</p>
         </div>
 
-        { flashMessage && <Notification message={flashMessage} requestSuccess={requestSuccess} />}
+
+        {flashMessage &&
+          <Alert variant={requestSuccess}>
+            {flashMessage}
+          </Alert>
+        }
 
         <Routes>
           <Route
@@ -167,13 +178,13 @@ const App = () => {
       </Router>
 
       <div style={{
+        borderTop: '1px solid rbg(225, 225, 225)',
         textAlign: 'center',
         marginTop: '50px',
-        borderTop: '1px solid rbg(225, 225, 225)'
       }}>
         <p>©christopherbrum.com 2023</p>
       </div>
-    </>
+    </div>
   )
 }
 

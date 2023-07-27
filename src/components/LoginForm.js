@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import loginService from '../services/login'
 import personService from '../services/person'
-// import PropTypes from 'prop-types'
+import { Form, Button } from 'react-bootstrap'
 
 const LoginForm = ({ createFlashMessage, setUser }) => {
 	const [username, setUsername] = useState('')
@@ -17,50 +17,57 @@ const LoginForm = ({ createFlashMessage, setUser }) => {
       })
 
       window.localStorage.setItem('loggedPhonebookUser', JSON.stringify(user))
-      createFlashMessage('Log in successful', true)
+      createFlashMessage(`Welcome, ${user.username}`, 'success')
       personService.setToken(user.token)
       setUser(user)
       setUsername('')
       setPassword('')
     } catch (error) {
-      createFlashMessage('Wrong credentials', false)
+      createFlashMessage('Wrong credentials', 'danger')
     }
   }
 
   const styling = {
-    backgroundColor: '#E5FFCC',
-    width: '250px',
-    padding: '0 30px 20px',
-    margin: '10px',
-    borderLeft: '1px solid black',
-    border: '1px solid black',
-    borderRadius: '3px',
+    width: '500px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: '100px'
+  }
+
+  const buttonStyling = {
+    marginTop: '20px',
+    width: '100%'
   }
 
   return (
     <div style={styling}>
       <h2>Login</h2>
 
-      <form onSubmit={handleLogin}>
-        <div>
-          username:
-          <input
+      <Form onSubmit={handleLogin}>
+        <Form.Group>
+          <Form.Label>username:</Form.Label>
+          <Form.Control
             id='username'
+            type='text'
             value={username}
             onChange={({ target }) => setUsername(target.value)}
           />
-        </div>
-        <div>
-          password:
-          <input
+          <Form.Label>password:</Form.Label>
+          <Form.Control
             id='password'
             type="password"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
           />
-      </div>
-        <button id='login-button' type="submit">login</button>
-      </form>
+          <Button
+            style={buttonStyling}
+            id='login-button'
+            variant='primary'
+            type="submit">
+            login
+          </Button>
+        </Form.Group>
+      </Form>
     </div>
   )
 }

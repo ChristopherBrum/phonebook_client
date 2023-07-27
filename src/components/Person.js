@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom'
 const Person = ({ id, name, number, deletePerson }) => {
 	const styling = {
 		border: 'solid black 1px',
-		width: '300px',
+		width: '100%',
 		padding: '10px',
 		margin: '10px',
-		backgroundColor: '#E5FFCC',
+		backgroundColor: '#EEEEEE',
 		display: 'flex',
 		justifyContent: 'space-between',
 		alignItems: 'center',

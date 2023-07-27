@@ -26,12 +26,12 @@ const Add = ({ user, persons, createFlashMessage, setPersons }) => {
     }
 
     if (newName.length < 3) {
-      createFlashMessage('name must be at least 3 characters long', false)
+      createFlashMessage('name must be at least 3 characters long', 'danger')
       return
     }
 
     if (!(/^\d{3}-\d{3}-\d{4}$/.test(newNumber)) || newNumber.length !== 12) {
-      createFlashMessage('number must be formatted `xxx-xxx-xxxx`', false)
+      createFlashMessage('number must be formatted `xxx-xxx-xxxx`', 'danger')
       return
     }
 
@@ -47,7 +47,7 @@ const Add = ({ user, persons, createFlashMessage, setPersons }) => {
       .create(newPersonObject)
       .then((createdPerson) => {
         if (!createdPerson) {
-          createFlashMessage('check your inputs', false)
+          createFlashMessage('check your inputs', 'danger')
           return
         }
         const personsObj = persons.concat(createdPerson)
@@ -55,11 +55,11 @@ const Add = ({ user, persons, createFlashMessage, setPersons }) => {
         setNewName('')
         setNewNumber('')
         navigate('/')
-        createFlashMessage(`${createdPerson.name} has been created`, true)
+        createFlashMessage(`'${createdPerson.name}' has been created`, 'success')
       })
       .catch(err => {
         console.log(err)
-        createFlashMessage(err.message, false)
+        createFlashMessage(err.message, 'danger')
       })
   }
 
@@ -73,7 +73,7 @@ const Add = ({ user, persons, createFlashMessage, setPersons }) => {
         setPersons(updatedPersons)
         setNewName('')
         setNewNumber('')
-        createFlashMessage(`${updatedPerson.name} has been updated`, true)
+        createFlashMessage(`${updatedPerson.name} has been updated`, 'success')
       })
       .catch(err => {
         console.log(err)
